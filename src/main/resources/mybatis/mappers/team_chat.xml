@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team_chat">
+	<insert id="insert" parameterType="map">
+		<![CDATA[
+		INSERT INTO team_chat
+		(chatNo, teamNo, chatDate, userNo, userId, chatContent)
+		VALUES(seq_team_chat_no.nextval, #{teamNo}, sysdate, #{userNo}, #{userId}, #{chatContent})
+		]]>
+	</insert>
+	
+	<select id="getList" parameterType="String" resultType="team_ChatVo">
+		<![CDATA[
+			SELECT chatNo, teamNo, chatDate, userNo, userId, chatContent
+			FROM team_chat
+			WHERE teamNo=#{teamNo}
+		]]>	
+	</select>
+</mapper>

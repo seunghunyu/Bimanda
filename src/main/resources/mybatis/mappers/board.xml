@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<insert id="insert" parameterType="boardVo">
+		<![CDATA[
+		INSERT INTO board
+		(boardNo, boardTitle, boardCategory, userNo, boardContent, regDate, hit_cnt)
+		VALUES(seq_board_no.nextval, #{boardTitle}, #{boardCategory}, #{userNo}, #{boardContent}, (to_char(sysdate,'YYYY-MM-DD hh24:mi')), 0)
+		]]>
+	</insert>
+	<insert id="reviewinsert" parameterType="reviewBoardVo">
+		<![CDATA[
+		INSERT INTO reviewBoard
+		(boardNo, boardTitle, boardCategory, userNo, boardContent, cateNo, regDate, hit_cnt)
+		VALUES(seq_board_no.nextval, #{boardTitle}, #{boardCategory}, #{userNo}, #{boardContent}, #{cateNo}, (to_char(sysdate,'YYYY-MM-DD hh24:mi')), 0)
+		]]>
+	</insert>
+	<resultMap type="boardVo" id="boardMap">
+      <result column="boardNo" property="boardNo"/>
+      <result column="boardCategory" property="boardCategory"/>
+      <result column="boardTitle" property="boardTitle"/>
+      <result column="userNo" property="userNo"/>
+      <result column="boardContent" property="boardContent"/>
+      <result column="regDate" property="regDate"/>
+      <result column="hit_cnt" property="hit_cnt"/>
+      <association javaType="UserVo" property="userVo">
+         <id column="userNo" property="userNo"/>
+         <result column="userId" property="userId"/>
+         <result column="userName" property="userName"/>
+      </association>
+   </resultMap>
+	<select id="getJisik" parameterType="String" resultMap="boardMap">
+		<![CDATA[
+			SELECT t.boardNo,t.boardTitle,t.boardCategory,t.userNo,t.boardContent,u.userId,u.userName, t.regDate, t.hit_cnt
+			FROM board t,users u
+			WHERE t.boardCategory=#{boardCategory} AND t.userNo=u.userNo
+			ORDER BY t.boardNo desc
+		]]>	
+	</select>
+	<select id="getBoard" parameterType="long" resultMap="boardMap">
+		<![CDATA[
+			SELECT t.boardNo,t.boardTitle,t.boardCategory,u.userId,t.boardContent, u.userName, t.regDate, t.hit_cnt
+			FROM board t,users u
+			WHERE t.boardNo=#{boardNo} AND t.userNo=u.userNo
+			ORDER BY t.boardNo desc
+		]]>	
+	</select>
+	<resultMap type="reviewBoardVo" id="reviewBoardMap">
+      <result column="boardNo" property="boardNo"/>
+      <result column="boardCategory" property="boardCategory"/>
+      <result column="boardTitle" property="boardTitle"/>
+      <result column="userNo" property="userNo"/>
+      <result column="boardContent" property="boardContent"/>
+      <result column="cateNo" property="cateNo"/>
+      <result column="regDate" property="regDate"/>
+      <result column="hit_cnt" property="hit_cnt"/>
+      <association javaType="UserVo" property="userVo">
+         <id column="userNo" property="userNo"/>
+         <result column="userId" property="userId"/>
+         <result column="userName" property="userName"/>
+      </association>
+      <association javaType="CategoryVo" property="categoryVo">
+         <id column="cateNo" property="cateNo"/>
+         <result column="cateName" property="cateName"/>
+      </association>
+    </resultMap>
+    <select id="getReviewBoard" parameterType="long" resultMap="reviewBoardMap">
+		<![CDATA[
+			SELECT t.boardNo,t.boardTitle,t.boardCategory,t.userNo,t.boardContent,t.cateNo,u.userId, u.userName, t.regDate, c.cateName,t.hit_cnt
+			FROM reviewboard t,users u, category c
+			WHERE t.boardNo=#{boardNo} AND t.userNo=u.userNo AND t.cateNo = c.cateNo
+			ORDER BY t.boardNo desc
+		]]>	
+	</select>
+    <select id="getReviewList" parameterType="String" resultMap="reviewBoardMap">
+		<![CDATA[
+			SELECT t.boardNo,t.boardTitle,t.boardCategory,t.userNo,t.boardContent,t.cateNo,u.userId, u.userName, t.regDate, c.cateName, t.hit_cnt
+			FROM reviewBoard t,users u, category c
+			WHERE t.boardCategory=#{boardCategory} AND t.userNo=u.userNo AND t.cateNo = c.cateNo
+			ORDER BY t.boardNo desc
+		]]>	
+	</select>
+	
+	<update id="update" parameterType="boardVo">
+	<![CDATA[
+	UPDATE board
+	SET boardTitle=#{boardTitle}, boardContent=#{boardContent}
+	WHERE boardNo=#{boardNo}
+	]]>
+	</update>
+	
+	<delete id="delete" parameterType="long">
+	DELETE FROM board WHERE boardNo = #{boardNo}
+	</delete>
+	<update id="updatehit" parameterType="map">
+		update board
+		set hit_cnt = hit_cnt + 1 
+		where boardNo = #{boardNo}
+		
+	</update>
+	<update id="reviewupdatehit" parameterType="map">
+		update reviewboard
+		set hit_cnt = hit_cnt + 1 
+		where boardNo = #{boardNo}
+		
+	</update>
+	<update id="reviewupdate" parameterType="reviewBoardVo">
+	<![CDATA[
+	UPDATE reviewboard
+	SET boardTitle=#{boardTitle}, boardContent=#{boardContent}
+	WHERE boardNo=#{boardNo}
+	]]>
+	</update>
+	
+	<delete id="reviewdelete" parameterType="long">
+	DELETE FROM reviewboard WHERE boardNo = #{boardNo}
+	</delete>
+</mapper>

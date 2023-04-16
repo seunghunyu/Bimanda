@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recruit">
+	<insert id="insert" parameterType="recruitVo">
+	<![CDATA[
+	INSERT INTO team_recruit
+	(no, title, userNo, content,regDate, hit_cnt)
+	VALUES(seq_recruit_no.nextval, #{title}, #{userNo}, #{content}, (to_char(sysdate,'YYYY-MM-DD hh24:mi')), 0)
+	]]>
+	</insert>
+	
+	<resultMap type="recruitVo" id="recruitMap">
+		<result column="no" property="no"/>
+		<result column="title" property="title"/>
+		<result column="userNo" property="userNo"/>
+		<result column="content" property="content"/>
+		<result column="regDate" property="regDate"/>
+		<result column="hit_cnt" property="hit_cnt"/>
+		<association javaType="UserVo" property="userVo">
+			<id column="userNo" property="userNo"/>
+			<result column="userId" property="userId"/>
+			<result column="userName" property="userName"/>
+			
+		</association>
+	</resultMap>
+	
+	<select id="selectAll" resultMap="recruitMap">
+	<![CDATA[
+	SELECT t.no, t.title, t.userNo, t.content, u.userId, u.userName,t.regDate, t.hit_cnt
+	FROM team_recruit t, users u
+	WHERE t.userNo = u.userNo
+	ORDER BY t.no desc
+	]]>
+	</select>
+	
+	<select id="selectOne" parameterType="long" resultMap="recruitMap">
+	<![CDATA[
+	SELECT t.no, t.title, t.userNo, t.content, u.userId, u.userName,t.regDate, t.hit_cnt
+	FROM team_recruit t, users u
+	WHERE t.userNo = u.userNo AND t.no = #{no}
+	]]>
+	</select>
+	
+	<update id="update" parameterType="recruitVo">
+	<![CDATA[
+	UPDATE team_recruit
+	SET title=#{title}, userNo=#{userNo}, content=#{content}
+	WHERE no=#{no}
+	]]>
+	</update>
+	
+	<delete id="delete" parameterType="long">
+	DELETE FROM team_recruit WHERE no = #{no}
+	</delete>
+	<update id="updatehit" parameterType="map">
+		update team_recruit
+		set hit_cnt = hit_cnt + 1 
+		where No = #{No}
+		
+	</update>
+</mapper>

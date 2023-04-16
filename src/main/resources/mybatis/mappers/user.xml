@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+	
+	<select id="selectUser" parameterType="string" resultType="userVo">
+		<![CDATA[
+		SELECT *
+		FROM users where userId=#{userId}
+		]]>
+	</select>
+	
+	<select id="selectLocation"  resultType="locationVo">
+		<![CDATA[
+		SELECT locationNo,userLocation
+		FROM location
+		]]>
+	</select>
+	
+	
+	<insert id="insert" parameterType="userVo">
+	<![CDATA[
+	INSERT INTO users
+	(userNo, userId, userName, userPassword, userSex, locationNo, userPhone)
+	VALUES(seq_users_no.nextval, #{userId}, #{userName}, #{userPassword}, #{userSex}, #{locationNo}, #{userPhone})
+	]]>
+	</insert>
+	<update id="update" parameterType="String">
+		UPDATE users
+	  	SET 
+	  	    userPassword=#{userPassword},
+	  	    userPhone=#{userPhone}
+	  	WHERE userId=#{userId}
+	</update>
+	
+	<select id="selectUser2" parameterType="map" resultType="userVo">
+		<![CDATA[
+		SELECT *
+		FROM users where userId=#{userId} AND userPassword=#{userPassword}
+		]]>
+	</select>
+	<select id="selectAuthUser" parameterType="map" resultType="userVo">
+		<![CDATA[
+		SELECT userNo, userId, userName, userPassword,  userPhone
+		FROM users WHERE userName=#{userName} AND userPhone=#{userPhone}
+		]]>
+	</select>
+	<delete id="deleteUser" parameterType="map">
+		<![CDATA[
+			DELETE FROM users
+			WHERE userId=#{userId} AND userPassword=#{userPassword}
+		]]>
+	</delete>
+	
+	<select id="selectIdName" parameterType="long" resultType="userVo">
+		<![CDATA[
+		SELECT userNo, userId, userName, teamNo
+		FROM users WHERE userNo=#{userNo}
+		]]>
+	</select>
+	
+	<update id="updateTeam" parameterType="map">
+	<![CDATA[
+	UPDATE users
+	SET teamNo=#{teamNo}
+	WHERE userNo=#{userNo}
+	]]>
+	</update>
+	
+	<update id="leaveTeam" parameterType="map">
+	<![CDATA[
+	UPDATE users
+	SET teamNo=null
+	WHERE userId=#{userId} AND userPassword=#{userPassword}
+	]]>
+	</update>
+	
+	
+	<resultMap type="mentorVo" id="mentorMap">
+		<result column="userNo" property="userNo"/>
+		<result column="education" property="education"/>
+		<result column="career" property="career"/>
+		<association javaType="UserVo" property="userVo">
+			<id column="userNo" property="userNo"/>
+			<result column="userId" property="userId"/>
+			<result column="userName" property="userName"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectAllMentor" resultMap="mentorMap">
+	<![CDATA[
+	SELECT m.userNo, m.education, m.career, u.userId, u.userName
+	FROM mentors m, users u
+	WHERE m.userNo = u.userNo AND m.confirmed = 'NOT'
+	]]>
+	</select>
+	
+	<insert id="insertMentor" parameterType="mentorVo">
+	<![CDATA[
+	INSERT INTO mentors
+	(userNo, education, career, confirmed, score)
+	VALUES(#{userNo}, #{education}, #{career}, 'NOT', 0)
+	]]>
+	</insert>
+	
+	<update id="updateMentor" parameterType="long">
+	UPDATE users
+	SET userStatus='Mentor'
+	WHERE userNo=#{userNo}
+	</update>
+	
+	<update id="confirmMentor" parameterType="long">
+	UPDATE mentors
+	SET confirmed = 'confirm'
+	WHERE userNo=#{userNo}
+	</update>
+	
+	<update id="updateMentorScore" parameterType="map">
+	UPDATE mentors
+	SET score=#{score}
+	WHERE userNo=#{userNo}
+	</update>
+	
+	<delete id="deleteMentor" parameterType="long">
+	<![CDATA[
+	DELETE FROM mentors
+	WHERE userNo=#{userNo}
+	]]>
+	</delete>
+	
+	<resultMap type="mentorRequestVo" id="mentorReqMap">
+		<result column="userNo" property="userNo"/>
+		<result column="teamNo" property="teamNo"/>
+		<association javaType="TeamVo" property="teamVo">
+			<id column="teamNo" property="teamNo"/>
+			<result column="teamName" property="teamName"/>
+		</association>
+		<association javaType="ProjectVo" property="projectVo">
+			<id column="projNo" property="projNo"/>
+			<result column="projName" property="projName"/>
+			<result column="projDescription" property="projDescription"/>
+		</association>
+	</resultMap>
+	
+	<select id="AllMenteeReq" parameterType="long" resultMap="mentorReqMap">
+	<![CDATA[
+	SELECT m.userNo, m.teamNo, t.teamName, p.projName, p.projDescription
+	FROM mentorrequest m, team t, project p
+	WHERE m.userNo = #{userNo}
+	AND m.teamNo = t.teamNo
+	AND t.teamNo = p.teamNo
+	]]>
+	</select>
+	
+	<delete id="deleteMentorReq" parameterType="map">
+	<![CDATA[
+	DELETE FROM mentorrequest
+	WHERE userNo=#{userNo} AND teamNo=#{teamNo}
+	]]>
+	</delete>
+	<select id="myboard" parameterType="long" resultType="boardVo">
+	<![CDATA[
+	SELECT boardNo, boardTitle, boardCategory
+	FROM board
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+	
+	<select id="myreviewboard" parameterType="long" resultType="reviewBoardVo">
+	<![CDATA[
+	SELECT boardNo, boardTitle, boardCategory
+	FROM reviewboard
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+	
+	<select id="myrecruit" parameterType="long" resultType="recruitVo">
+	<![CDATA[
+	SELECT no, title
+	FROM team_recruit
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+	
+	<select id="mymentor" parameterType="long" resultType="mentorVo">
+	<![CDATA[
+	SELECT education, career
+	FROM mentors
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+
+	<select id="mycomments" parameterType="long" resultType="commentsVo">
+	<![CDATA[
+	SELECT commentNo, boardNo, commentContent
+	FROM comments
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+
+	<select id="myrequest" parameterType="long" resultType="requestVo">
+	<![CDATA[
+	SELECT reqNo, no, content
+	FROM team_request
+	WHERE userNo=#{userNo}
+	]]>
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="comments">
+	<insert id="insert" parameterType="commentsVo">
+		<![CDATA[
+		INSERT INTO comments
+		(commentNo, boardNo, userNo, commentContent, regDate)
+		VALUES(seq_comments_no.nextval, #{boardNo}, #{userNo}, #{commentContent}, (to_char(sysdate,'YYYY-MM-DD hh24:mi')))
+		]]>
+	</insert>
+	<resultMap type="commentsVo" id="commentsMap">
+      <result column="commentNo" property="commentNo"/>
+      <result column="boardNo" property="boardNo"/>
+      <result column="userNo" property="userNo"/>
+      <result column="commentContent" property="commentContent"/>
+      <result column="regDate" property="regDate"/>
+      <association javaType="UserVo" property="userVo">
+         <id column="userNo" property="userNo"/>
+         <result column="userId" property="userId"/>
+         <result column="userName" property="userName"/>
+      </association>
+      
+   </resultMap>
+	<select id="getList" parameterType="String" resultMap="commentsMap">
+		<![CDATA[
+			SELECT c.commentNo,c.boardNo,c.userNo,c.commentContent,u.userId,u.userName, c.regDate 
+			FROM comments c,users u, dual
+			WHERE c.boardNo=#{boardNo} AND c.userNo=u.userNo
+			ORDER BY c.commentNo
+		]]>	
+	</select>
+	<select id="selectOne" parameterType="long" resultType="commentsVo">
+	<![CDATA[
+	SELECT commentNo, boardNo, userNo, commentContent 
+	FROM comments WHERE commentNo=#{commentNo}
+	]]>
+	</select>
+	<update id="update" parameterType="commentsVo">
+	<![CDATA[
+	UPDATE comments
+	SET commentContent=#{commentContent}
+	WHERE commentNo=#{commentNo}
+	]]>
+	</update>
+	
+	<delete id="delete" parameterType="long">
+	DELETE FROM comments WHERE commentNo=#{commentNo}
+	</delete>
+</mapper>

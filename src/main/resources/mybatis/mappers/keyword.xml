@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="keyword">
+	
+	
+	<select id="getList"  parameterType="long" resultType="KeywordVo">
+		<![CDATA[
+		SELECT userNo,keyName
+		FROM keyword 
+		WHERE userNo=#{userNo}
+		]]>
+	</select>
+	
+	<select id="getTeamKeywordList"  parameterType="long" resultType="KeywordVo">
+		<![CDATA[
+		SELECT teamNo,keyName
+		FROM teamKeyword 
+		WHERE teamNo=#{teamNo}
+		]]>
+	</select>
+	
+	
+	<insert id="insert" parameterType="KeywordVo">
+	<![CDATA[
+	INSERT INTO keyword
+	(userNo,keyName)
+	VALUES(#{userNo},#{keyName})
+	]]>
+	</insert>
+	
+	<insert id="insertTeamKeyword" parameterType="KeywordVo">
+	<![CDATA[
+	INSERT INTO teamKeyword
+	(teamNo,keyName)
+	VALUES(#{teamNo},#{keyName})
+	]]>
+	</insert>
+	
+	<delete id="deleteKeyword" parameterType="KeywordVo">
+	<![CDATA[
+	DELETE FROM keyword
+	WHERE userNo=#{userNo} AND keyName=#{keyName}
+	
+	]]>
+	</delete>
+	
+	<delete id="deleteTeamKeyword" parameterType="KeywordVo">
+	<![CDATA[
+	DELETE FROM teamKeyword
+	WHERE teamNo=#{teamNo} AND keyName=#{keyName}
+	
+	]]>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>		
+		<typeAlias alias="teamVo" type="com.bit.bimanda.vo.TeamVo"/>
+		<typeAlias alias="userVo" type="com.bit.bimanda.vo.UserVo"/>
+		<typeAlias alias="boardVo" type="com.bit.bimanda.vo.BoardVo"/>	
+		<typeAlias alias="commentsVo" type="com.bit.bimanda.vo.CommentsVo"/>
+		<typeAlias alias="categoryVo" type="com.bit.bimanda.vo.CategoryVo"/>
+		<typeAlias alias="reviewBoardVo" type="com.bit.bimanda.vo.ReviewBoardVo"/>	
+		<typeAlias alias="locationVo" type="com.bit.bimanda.vo.LocationVo"/>	
+		<typeAlias alias="recruitVo" type="com.bit.bimanda.vo.RecruitVo"/>
+		<typeAlias alias="requestVo" type="com.bit.bimanda.vo.RequestVo"/>
+		<typeAlias alias="memberVo" type="com.bit.bimanda.vo.MemberVo"/>
+		<typeAlias alias="locationVo" type="com.bit.bimanda.vo.LocationVo"/>
+		<typeAlias alias="taskVo" type="com.bit.bimanda.vo.TaskVo"/>
+		<typeAlias alias="projectVo" type="com.bit.bimanda.vo.ProjectVo"/>
+		<typeAlias alias="team_ChatVo" type="com.bit.bimanda.vo.Team_ChatVo"/>	
+		<typeAlias alias="KeywordVo" type="com.bit.bimanda.vo.KeywordVo"/>
+		<typeAlias alias="mappingVo" type="com.bit.bimanda.vo.MappingVo"/>
+		<typeAlias alias="mentorVo" type="com.bit.bimanda.vo.MentorVo"/>
+		<typeAlias alias="mentorRequestVo" type="com.bit.bimanda.vo.MentorRequestVo"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="mybatis/mappers/user.xml"/>
+		<mapper resource="mybatis/mappers/board.xml"/>
+		<mapper resource="mybatis/mappers/comments.xml"/>
+		<mapper resource="mybatis/mappers/category.xml"/>
+		<mapper resource="mybatis/mappers/team.xml"/>
+		<mapper resource="mybatis/mappers/recruit.xml"/>
+		<mapper resource="mybatis/mappers/request.xml"/>
+		<mapper resource="mybatis/mappers/task.xml"/>
+		<mapper resource="mybatis/mappers/project.xml"/>
+		<mapper resource="mybatis/mappers/team_chat.xml"/>
+		<mapper resource="mybatis/mappers/keyword.xml"/>
+	</mappers>
+</configuration>

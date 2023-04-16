@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team">
+	<insert id="insertTeam" parameterType="string">
+	<![CDATA[
+	INSERT INTO team (teamNo, teamName, mentor) 
+	VALUES (seq_team_no.nextval, #{teamName}, null)
+	]]>
+	</insert>
+	
+	<select id="selectNo" parameterType="string" resultType="long">
+		<![CDATA[
+		SELECT teamNo
+		FROM team where teamName=#{teamName}
+		]]>
+	</select>
+	<select id="selectTname" parameterType="long" resultType="string">
+	<![CDATA[
+	SELECT teamName FROM team WHERE teamNo=#{teamNo}
+	]]>
+	</select>
+	
+	<insert id="insertMem" parameterType="map">
+	<![CDATA[
+	INSERT INTO teamMem (teamNo, userNo) 
+	VALUES (#{teamNo}, #{userNo})
+	]]>
+	</insert>
+	
+	<resultMap type="mentorVo" id="mentorMap">
+		<result column="userNo" property="userNo"/>
+		<result column="education" property="education"/>
+		<result column="career" property="career"/>
+		<result column="score" property="score"/>
+		<association javaType="UserVo" property="userVo">
+			<id column="userNo" property="userNo"/>
+			<result column="userId" property="userId"/>
+			<result column="userName" property="userName"/>
+			<result column="userPhone" property="userPhone"/>
+			<result column="userState" property="userStatus"/>
+		</association>
+	</resultMap>
+	
+	<delete id="leaveTeam" parameterType="map">
+		<![CDATA[
+		DELETE FROM teamMem
+		WHERE userNo=#{userNo} AND teamNo=#{teamNo}
+		]]>
+	</delete>
+	
+	<select id="selectConfirmedMentor" resultMap="mentorMap">
+	<![CDATA[
+	SELECT m.userNo, m.education, m.career, m.score, u.userId, u.userName, u.userPhone
+	FROM mentors m, users u
+	WHERE m.userNo = u.userNo AND m.confirmed = 'confirm'
+	ORDER BY m.score DESC
+	]]>
+	</select>
+	
+	<insert id="insertMentorReq" parameterType="map">
+	<![CDATA[
+	INSERT INTO mentorrequest (userNo, teamNo) 
+	VALUES (#{userNo}, #{teamNo})
+	]]>
+	</insert>
+	
+	<update id="updateMentor" parameterType="map">
+	UPDATE team
+	SET mentor=#{userNo}
+	WHERE teamNo=#{teamNo}
+	</update>
+	
+	<select id="teamList" parameterType="long" resultType="teamVo">
+   <![CDATA[
+   SELECT t.teamNo, t.teamName
+   FROM team t, teamMem tm
+   WHERE tm.userNo=#{userNo} AND tm.teamNo=t.teamNo
+   ]]>
+   </select>
+   
+	<select id="teamMemList" parameterType="long" resultType="userVo">
+	<![CDATA[
+	SELECT u.userName, u.userStatus
+	FROM team t, teamMem tm, users u
+	WHERE tm.teamNo=#{teamNo} AND u.teamNo=#{teamNo} AND t.teamNo = tm.teamNo AND tm.userNo = u.userNo
+	]]>
+	</select>
+</mapper>

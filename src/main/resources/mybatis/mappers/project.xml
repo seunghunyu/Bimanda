@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="project">
+	<select id="select" parameterType="long" resultType="projectVo">
+		SELECT projNo, teamNo, projName, projDescription
+		FROM project
+		WHERE teamNo = #{teamNo}
+	</select>
+	<select id="selectProject" parameterType="long" resultType="projectVo">
+		SELECT projNo, teamNo, projName, projDescription
+		FROM project
+		WHERE projNo = #{projNo}
+	</select>
+	<insert id="insert" parameterType="projectVo">
+		insert into project
+		(projNo, teamNo, projName, projDescription)
+		VALUES(seq_project_no.nextval, #{teamNo}, #{projName},#{projDescription})
+	</insert>
+	<delete id="delete" parameterType="projectVo">
+		delete from project where projNo=#{projNo}
+	</delete>
+	<select id="selectList" parameterType="long" resultType="projectVo">
+		<![CDATA[
+		SELECT projNo, teamNo, projName, projDescription
+		FROM project 
+		WHERE teamNo=#{teamNo}
+		]]>
+	</select>
+	
+	
+</mapper>

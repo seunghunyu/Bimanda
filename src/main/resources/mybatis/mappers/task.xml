@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="task">
+	<select id="selectAll" parameterType="long" resultType="taskVo">
+		SELECT taskNo, projNo, taskState, taskTitle, userId
+		FROM task
+		WHERE projNo = #{projNo}
+		order by idx asc
+	</select>
+	
+	<select id="checkState" parameterType="long" resultType="long">
+		SELECT taskState
+		FROM task
+		WHERE taskNo=#{taskNo}
+	</select>
+	
+	<insert id="insert" parameterType="taskVo">
+		insert into task
+		(taskNo, projNo, taskState, taskTitle, userId)
+		VALUES(seq_task_no.nextval, #{projNo}, 0, #{taskTitle}, #{userId})
+	</insert>
+	<delete id="delete" parameterType="taskVo">
+		delete from task where taskNo=#{taskNo}
+	</delete>
+	<update id="move" parameterType="map">
+		update task
+		set taskState=#{taskState}
+		where taskNo=#{taskNo}
+	</update>
+	<update id="setIndex" parameterType="map">
+		update task
+		set idx=#{index}
+		where taskNo=#{idx}
+	</update>
+	<update id="update" parameterType="map">
+		update task
+		set taskTitle=#{taskTitle}
+		where taskNo=#{taskNo}
+	</update>
+
+
+</mapper>

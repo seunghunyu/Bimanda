@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="request">
+	<insert id="insert" parameterType="userVo">
+	<![CDATA[
+	INSERT INTO team_request (reqNo, no, userNo, content)
+	VALUES(seq_request_no.nextval, #{no}, #{userNo}, #{content})
+	]]>
+	</insert>
+	
+	<resultMap type="requestVo" id="requestMap">
+		<result column="reqNo" property="reqNo"/>
+		<result column="no" property="no"/>
+		<result column="userNo" property="userNo"/>
+		<result column="content" property="content"/>
+		<association javaType="UserVo" property="userVo">
+			<id column="userNo" property="userNo"/>
+			<result column="userId" property="userId"/>
+			<result column="userName" property="userName"/>
+			<result column="locationNo" property="locationNo" />
+			<association javaType="LocationVo" property="locationVo">
+				<id column="locationNo" property="locationNo" />
+				<result column="userLocation" property="userLocation" />
+			</association>
+		</association>
+	</resultMap>
+	
+	<select id="selectAll" parameterType="long" resultMap="requestMap">
+	<![CDATA[
+	SELECT t.reqNo, t.no, t.userNo, t.content, u.userId, u.locationNo, l.userLocation, u.userName
+	FROM team_request t, users u, location l
+	WHERE t.userNo = u.userNo AND t.no=#{no} AND u.locationNo=l.locationNo
+	]]>
+	</select>
+	
+	<select id="selectOne" parameterType="long" resultType="requestVo">
+	<![CDATA[
+	SELECT reqNo, no, userNo, content FROM team_request WHERE reqNo=#{reqNo}
+	]]>
+	</select>
+	
+	<select id="checkRequest" parameterType="map" resultType="requestVo">
+	<![CDATA[
+	SELECT reqNo, no, userNo, content
+	FROM team_request
+	WHERE no=#{no} AND userNo=#{userNo}
+	]]>
+	</select>
+	
+	<update id="update" parameterType="requestVo">
+	<![CDATA[
+	UPDATE team_request
+	SET userNo=#{userNo}, content=#{content}
+	WHERE reqNo=#{reqNo} AND no=#{no}
+	]]>
+	</update>
+	
+	<delete id="delete" parameterType="long">
+	DELETE FROM team_request WHERE reqNo=#{reqNo}
+	</delete>
+</mapper>
