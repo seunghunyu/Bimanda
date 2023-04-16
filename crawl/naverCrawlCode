@@ -1,0 +1,174 @@
+from flask import Flask, render_template, request
+from urllib.request import Request, urlopen, quote
+import sys
+from urllib.parse import quote
+from importlib import reload
+import openpyxl
+
+import pandas as pd
+import datetime
+from bs4 import BeautifulSoup as bs
+
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello'
+
+
+@app.route('/crawl')
+def crawl():
+    userId = request.args.get('userId')
+    param = request.args.get('keyName')
+    print(userId, param)
+    navercafe(userId, param)
+    naverblog(userId, param)
+    return 'true'
+
+
+@app.route('/teamCrawl')
+def teamcrawl():
+    teamNo = request.args.get('teamNo')
+    param = request.args.get('keyName')
+    print(teamNo, param)
+    teamnavercafe(teamNo, param)
+    teamnaverblog(teamNo, param)
+    return 'true'
+
+def navercafe(userId, param):
+    # url 인코딩을해줘야 한글이 먹는다.
+    param_utf8 = param.encode("utf-8")
+    param_perc_encoded = quote(param_utf8)
+    # 네이버 카페는 페이지 시작이 1 그리고 11,21 이렇게 10씩 늘어난다.
+    # 긁어오고 싶은 url
+
+    url = str(
+        "https://search.naver.com/search.naver?where=article&ie=utf8&query=+" + param_perc_encoded + "&prdtype=0&t=0&st=rel&date_option=0&date_from=&date_to=&srchby=text&dup_remove=1&cafe_url=&without_cafe_url=&board=&sm=tab_pge&start=".format(
+            param_perc_encoded))
+    # i 가 페이지
+    for i in range(1, 52, 10):
+        req = urlopen(url + str(i))  # 해당 url 열기
+        soup = bs(req.read(), 'html.parser')  # url이 가지고 있는 태그들 가져오기
+
+        # print(soup.prettify())
+        links = soup.find_all("a", attrs={"class": "sh_cafe_title"})
+        contents = soup.find_all("dd", attrs={"class": "sh_cafe_passage"})
+        # for link in links:      #카페 링크 가져오기
+        #    print(link.prettify())
+        # for content in contents:   #카페 내용 가져오기
+        # print(content.prettify())
+
+        data = pd.DataFrame(columns=("links", "contents"))
+
+        data["links"] = links
+        data["contents"] = contents
+
+        data.to_excel('C:\\Users\\BIT\\Desktop\\navercafe\\' + userId + param + str(i) + '.xlsx', encoding='UTF-8')
+
+    print(data)
+
+
+def naverblog(userId, param):
+    # url 인코딩을해줘야 한글이 먹는다.
+    param_utf8 = param.encode("utf-8")
+    param_perc_encoded = quote(param_utf8)
+    # 네이버 카페는 페이지 시작이 1 그리고 11,21 이렇게 10씩 늘어난다.
+    # 긁어오고 싶은 url
+
+    url = str(
+        "https://search.naver.com/search.naver?date_from=&date_option=0&date_to=&dup_remove=1&nso=&post_blogurl=&post_blogurl_without=&query=+" + param_perc_encoded + "&sm=tab_pge&srchby=all&st=sim&where=post&start=".format(
+            param_perc_encoded))
+    # i 가 페이지
+    ##  +str(i)
+    for i in range(1, 52, 10):
+        req = urlopen(url + str(i))  # 해당 url 열기
+        soup = bs(req.read(), 'html.parser')  # url이 가지고 있는 태그들 가져오기
+
+        links = soup.find_all("a", attrs={"class": "sh_blog_title _sp_each_url _sp_each_title"})
+        contents = soup.find_all("dd", attrs={"class": "sh_blog_passage"})
+
+        data = {'links': links, 'contents': contents}
+        data = pd.DataFrame(columns=("links", "contents"))
+
+        data["links"] = links
+        data["contents"] = contents
+
+        data.to_excel('C:\\Users\\BIT\\Desktop\\naverblog\\' + userId + param + str(i) + '.xlsx', encoding='UTF-8')
+
+    print(data)
+
+def teamnavercafe(teamNo, param):
+    # url 인코딩을해줘야 한글이 먹는다.
+    param_utf8 = param.encode("utf-8")
+    param_perc_encoded = quote(param_utf8)
+    # 네이버 카페는 페이지 시작이 1 그리고 11,21 이렇게 10씩 늘어난다.
+    # 긁어오고 싶은 url
+
+    url = str(
+        "https://search.naver.com/search.naver?where=article&ie=utf8&query=+" + param_perc_encoded + "&prdtype=0&t=0&st=rel&date_option=0&date_from=&date_to=&srchby=text&dup_remove=1&cafe_url=&without_cafe_url=&board=&sm=tab_pge&start=".format(
+            param_perc_encoded))
+    # i 가 페이지
+    for i in range(1, 52, 10):
+        req = urlopen(url + str(i))  # 해당 url 열기
+        soup = bs(req.read(), 'html.parser')  # url이 가지고 있는 태그들 가져오기
+
+        # print(soup.prettify())
+        links = soup.find_all("a", attrs={"class": "sh_cafe_title"})
+        contents = soup.find_all("dd", attrs={"class": "sh_cafe_passage"})
+        # for link in links:      #카페 링크 가져오기
+        #    print(link.prettify())
+        # for content in contents:   #카페 내용 가져오기
+        # print(content.prettify())
+
+        data = pd.DataFrame(columns=("links", "contents"))
+
+        data["links"] = links
+        data["contents"] = contents
+
+        data.to_excel('C:\\Users\\BIT\\Desktop\\navercafe\\' + str(teamNo) + param + str(i) + '.xlsx', encoding='UTF-8')
+
+    print(data)
+
+
+def teamnaverblog(teamNo, param):
+    # url 인코딩을해줘야 한글이 먹는다.
+    param_utf8 = param.encode("utf-8")
+    param_perc_encoded = quote(param_utf8)
+    # 네이버 카페는 페이지 시작이 1 그리고 11,21 이렇게 10씩 늘어난다.
+    # 긁어오고 싶은 url
+
+    url = str(
+        "https://search.naver.com/search.naver?date_from=&date_option=0&date_to=&dup_remove=1&nso=&post_blogurl=&post_blogurl_without=&query=+" + param_perc_encoded + "&sm=tab_pge&srchby=all&st=sim&where=post&start=".format(
+            param_perc_encoded))
+    # i 가 페이지
+    ##  +str(i)
+    for i in range(1, 52, 10):
+        req = urlopen(url + str(i))  # 해당 url 열기
+        soup = bs(req.read(), 'html.parser')  # url이 가지고 있는 태그들 가져오기
+
+        links = soup.find_all("a", attrs={"class": "sh_blog_title _sp_each_url _sp_each_title"})
+        contents = soup.find_all("dd", attrs={"class": "sh_blog_passage"})
+
+        data = {'links': links, 'contents': contents}
+        data = pd.DataFrame(columns=("links", "contents"))
+
+        data["links"] = links
+        data["contents"] = contents
+
+        data.to_excel('C:\\Users\\BIT\\Desktop\\naverblog\\' + str(teamNo) + param + str(i) + '.xlsx', encoding='UTF-8')
+
+    print(data)
+
+
+
+@app.route('/first')
+def hello_first():
+    return "<h3>Hello First</h3>"
+
+
+
+
+if __name__ == '__main__':
+    app.run()

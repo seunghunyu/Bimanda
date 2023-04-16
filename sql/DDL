@@ -1,0 +1,363 @@
+-- 테이블 삭제
+
+drop table mentorrequest;
+drop table mentors;
+drop table team_request;
+drop table team_recruit;
+drop table task;
+drop table project;
+drop table teamMem;
+drop table comments;
+drop table reviewboard;
+drop table board;
+drop table keyword;
+drop table teamkeyword;
+drop table category;
+drop table users;
+drop table team_chat;
+drop table team;
+drop table location;
+
+
+
+-- 시퀀스 삭제
+
+drop sequence seq_recruit_no;
+drop sequence seq_request_no;
+drop sequence seq_project_no;
+drop sequence seq_task_no;
+drop sequence seq_comments_no;
+drop sequence seq_board_no;
+drop sequence seq_category_no;
+drop sequence seq_users_no;
+drop sequence seq_team_no;
+drop sequence seq_team_chat_no;
+drop sequence seq_location_no;
+
+
+
+-- select 문
+
+select * from project;
+select * from task;
+select * from location;
+select * from keyword;
+select * from teamkeyword;
+select * from comments order by commentNo;
+select * from board;
+select * from reviewboard;
+select * from team_recruit;
+select * from team;
+select * from teamMem;
+select * from users;
+select * from team_request;
+select * from category;
+select * from team_chat;
+select * from mentors;
+select * from mentorrequest;
+
+
+
+-- 팀 시퀀스
+
+CREATE SEQUENCE seq_team_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 팀 테이블
+
+CREATE TABLE team (
+    teamNo      NUMBER,
+    teamName    VARCHAR2(50)    NOT NULL,
+    mentor      NUMBER,
+    PRIMARY KEY(teamNo)
+);
+
+
+
+-- 지역 시퀀스
+
+CREATE SEQUENCE seq_location_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 지역 테이블
+
+CREATE TABLE location (
+    locationNo      NUMBER,
+    userLocation    VARCHAR2(50)    NOT NULL,
+    PRIMARY KEY(locationNo)
+);
+
+
+
+-- 회원 시퀀스
+
+CREATE SEQUENCE seq_users_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 회원 테이블
+
+CREATE TABLE users (
+  userNo        NUMBER,
+  userId        VARCHAR2(20)    NOT NULL Unique,
+  userName      VARCHAR2(20)    NOT NULL,
+  userPassword  VARCHAR2(20)    NOT NULL,
+  userSex       VARCHAR2(20),
+  userStatus    VARCHAR2(20),
+  userPhone     VARCHAR2(20),
+  locationNo    NUMBER,
+  teamNo        NUMBER,
+  PRIMARY KEY(userNo),
+  CONSTRAINT users_fk FOREIGN KEY(teamNo)
+  REFERENCES team(teamNo) on delete set null,
+  CONSTRAINT users_fk2 FOREIGN KEY(locationNo)
+  REFERENCES location(locationNo) on delete cascade
+);
+
+
+
+-- 멘토 테이블
+
+CREATE TABLE mentors (
+    userNo  NUMBER,
+    education   VARCHAR2(100),
+    career  VARCHAR2(500),
+    confirmed   VARCHAR2(10),
+    score   NUMBER,
+    PRIMARY KEY(userNo),
+    CONSTRAINT mentor_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade
+);
+
+-- 멘토 신청 테이블
+
+CREATE TABLE mentorrequest (
+    userNo  NUMBER,
+    teamNo  NUMBER,
+    CONSTRAINT mentorreq_fk FOREIGN KEY(userNo)
+    REFERENCES mentors(userNo) on delete cascade
+);
+
+
+
+-- 팀모집글 시퀀스
+
+CREATE SEQUENCE seq_recruit_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 팀원모집 테이블
+
+CREATE TABLE team_recruit (
+    no          NUMBER,
+    title       VARCHAR2(100)    NOT NULL,
+    userNo      NUMBER          NOT NULL,
+    content     NCLOB,
+    PRIMARY KEY(no),
+    CONSTRAINT recruit_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade
+);
+
+
+
+-- 팀원신청 시퀀스
+
+CREATE SEQUENCE seq_request_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 팀원신청 테이블
+
+CREATE TABLE team_request (
+    reqNo       NUMBER,
+    no          NUMBER      NOT NULL,
+    userNo      NUMBER      NOT NULL,
+    content     VARCHAR2(2000),
+    PRIMARY KEY(reqNo),
+    CONSTRAINT request_fk FOREIGN KEY(no)
+    REFERENCES team_recruit(no) on delete cascade,
+    CONSTRAINT request_fk2 FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade
+);
+
+
+
+-- 팀원 테이블
+
+CREATE TABLE teamMem (
+    teamNo      NUMBER    NOT NULL,
+    userNo      NUMBER    NOT NULL,
+    CONSTRAINT teamMem_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade,
+    CONSTRAINT teamMem_fk2 FOREIGN KEY(teamNo)
+    REFERENCES team(teamNo) on delete cascade
+);
+
+
+
+-- 카테고리 시퀀스
+
+CREATE SEQUENCE seq_category_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 카테고리 테이블
+
+CREATE TABLE category (
+    cateNo      NUMBER,
+    cateName    VARCHAR2(50)    NOT NULL,
+    PRIMARY KEY(cateNo)
+);
+
+
+
+-- 키워드 테이블
+
+CREATE TABLE keyword (
+    userNo     NUMBER          NOT NULL,
+    keyName    VARCHAR2(50)    NOT NULL
+);
+
+-- 팀키워드 테이블
+
+CREATE TABLE teamkeyword (
+    teamNo      NUMBER      NOT NULL,
+    keyName     VARCHAR2(50)    NOT NULL
+);
+
+
+
+-- 게시물 시퀀스
+
+CREATE SEQUENCE seq_board_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 게시물 테이블
+
+CREATE TABLE board (
+    boardNo         NUMBER,
+    boardTitle      VARCHAR2(500)    NOT NULL,
+    boardCategory   VARCHAR2(100)   NOT NULL,
+    userNo          NUMBER          NOT NULL,
+    boardContent    NCLOB   NOT NULL,
+    regDate         VARCHAR2(30) NOT NULL,
+    hit_cnt         NUMBER NOT NULL,
+    PRIMARY KEY(boardNo),
+    CONSTRAINT board_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade
+);
+
+-- 리뷰게시글 테이블
+
+CREATE TABLE reviewboard (
+    boardNo         NUMBER,
+    boardTitle      VARCHAR2(500)    NOT NULL,
+    boardCategory   VARCHAR2(100)   NOT NULL,
+    userNo          NUMBER          NOT NULL,
+    boardContent    NCLOB   NOT NULL,
+    cateNo          NUMBER          NOT NULL,
+    regDate         VARCHAR2(30) NOT NULL,
+    hit_cnt         NUMBER NOT NULL,
+    PRIMARY KEY(boardNo),
+    CONSTRAINT reviewboard_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade,
+    CONSTRAINT reviewboard_fk2 FOREIGN KEY(cateNo)
+    REFERENCES category(cateNo) on delete cascade
+);
+
+
+
+-- 게시물 댓글 시퀀스
+
+CREATE SEQUENCE seq_comments_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 게시물 댓글 테이블
+
+CREATE TABLE comments (
+    commentNo    NUMBER,
+    boardNo      NUMBER    NOT NULL,
+    userNo       NUMBER    NOT NULL,
+    commentContent    VARCHAR2(500)   NOT NULL,
+    regDate VARCHAR2(30) NOT NULL,
+    PRIMARY KEY(commentNo),
+    CONSTRAINT comment_fk FOREIGN KEY(userNo)
+    REFERENCES users(userNo) on delete cascade
+);
+
+
+
+-- 프로젝트 시퀀스
+
+CREATE SEQUENCE seq_project_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 프로젝트 테이블
+
+create table project(
+    projNo  number,
+    teamNo  number NOT NULL,
+    projName VARCHAR2(200) NOT NULL,
+    projDescription VARCHAR2(1000),
+    PRIMARY KEY(projNo)
+);
+
+
+
+-- 할 일 시퀀스
+
+CREATE SEQUENCE seq_task_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 할 일 테이블
+
+create table task(
+    taskNo  number,
+    projNo number NOT NULL,
+    taskState number,
+    taskTitle VARCHAR2(2000),
+    userId  VARCHAR2(20) NOT NULL,
+    idx     number,
+    PRIMARY KEY(taskNo),
+    CONSTRAINT task_fk FOREIGN KEY(projNo)
+    REFERENCES project(projNo) on delete cascade
+);
+
+
+
+-- 채팅 시퀀스
+
+CREATE SEQUENCE seq_team_chat_no
+INCREMENT BY 1
+START WITH 1
+NOCACHE ;
+
+-- 채팅 테이블
+
+CREATE TABLE team_chat(
+    chatNo NUMBER,
+    teamNo NUMBER NOT NULL,
+    chatDate DATE NOT NULL,
+    userNo NUMBER NOT NULL,
+    userId VARCHAR2(50),
+    chatContent VARCHAR2(2000),
+    PRIMARY KEY(chatNo),
+    CONSTRAINT team_chat_fk FOREIGN KEY(teamNo)
+    REFERENCES team(teamNo) on delete cascade
+);

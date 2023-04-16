@@ -1,0 +1,156 @@
+
+-- category 테이블
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'논문/리포트');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'기획/아이디어');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'네이밍/슬로건');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'디자인');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'광고/마케팅');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'사진');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'UCC/영상');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'예체능');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'문학/수기');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'캐릭터/만화');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'과학/공학');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'게임/소프트웨어');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'건축/건설');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'체험/참여');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'취업/창업');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'경품/이벤트');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'전시/페스티발');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'장학(금)재단');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'봉사활동');
+
+insert into category
+(cateNo, cateName)
+VALUES(seq_category_no.nextval,'해외');
+
+
+
+--location 테이블
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'서울');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'부산');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'대구');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'인천');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'광주');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'대전');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'울산');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'세종');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'경기');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'강원');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'충북');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'충남');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'전북');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'전남');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'경북');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'경남');
+
+insert into location
+(locationNo, userLocation)
+VALUES(seq_location_no.nextval,'제주');
+
+commit;

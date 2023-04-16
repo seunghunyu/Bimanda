@@ -67,7 +67,7 @@ public class Crawlkeyword {
 							calist.add(cafe);	
 							
 						}
-					}
+					
 			        cafelist.add(calist);
 			        
 //					br.close();

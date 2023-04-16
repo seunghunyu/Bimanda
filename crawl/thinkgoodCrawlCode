@@ -1,0 +1,110 @@
+# [공모전 이름, 해당 공모전의 링크, 이미지 경로] 저장하는 코드
+
+
+
+
+import urllib.request
+import re
+import lxml
+from bs4 import BeautifulSoup
+import pandas as pd
+
+base_url = "https://www.thinkcontest.com/Contest/CateField.html?page={}&c=5" #긁고싶은 url (page이동하면서 긁어올거라서 일단 page={}로)
+keywords = []
+result = []
+i=1
+for n in range(0,4):  # url에 page={}에 들어갈 부분을 설정해주는 부분.
+    url = base_url.format(n+1)
+    req = urllib.request.urlopen(url)
+    res = req.read()
+    soup = BeautifulSoup(res,'lxml') # 여기까진 그냥 따라 쓰시면 됩니다.
+
+    titles = soup.find_all("div",class_=re.compile("contest-title.*?",re.DOTALL))  # div 이름이 "contest-title.*?" 인 애들 찾기(제목들)
+    urls = [each_line.a.get('href').strip() for each_line in titles] # 위에서 찾은 거에서 a태그의 href속성값들을 가져와 urls에 저장
+
+    for url1 in urls: # urls에는 각각 게시물로 이동하는 링크가 걸려있고 각각 for문을 돌려줌
+        req2 = urllib.request.urlopen("http://www.thinkcontest.com"+url1) # 해당 게시물 링크
+        res2 = req2.read()
+        soup = BeautifulSoup(res2, 'lxml')
+
+        links = soup.find_all("div", class_=re.compile("contest-overview.*?",re.DOTALL)) # 해당 공모전 사이트로 이동하는 링크
+        titles = soup.find_all("span", class_=re.compile("title", re.DOTALL)) # 해당 공모전 제목
+        try:
+            link = [each_line.a.get('href').strip() for each_line in links]  # 링크가 있으면 가져오고 없으면 '링크없음'
+        except AttributeError as e:
+            link = '링크없음'
+
+        title = [each_line.get_text().replace(',','tjdgjs').strip() for each_line in titles] # 제목 정제하는 작업
+        imgs = soup.find("div",class_="poster-holder") # 이미지 저장하는 부분
+        print(title)
+        print(imgs)
+        print(type(imgs))
+        try:
+            front_imgUrl = 'https://www.thinkcontest.com'
+            back_imgUrl = imgs.find("img")["src"]
+
+            imgUrl = front_imgUrl + back_imgUrl
+            import datetime
+            basename = "image"
+            suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+            filename = "_".join([basename, suffix])
+
+            fullname = filename+".jpg"
+
+            urllib.request.urlretrieve(imgUrl, fullname)   # 이미지를 fullname으로 저장
+        except AttributeError as e:
+            fullname = "배경없음.jpg"
+
+        result.append([title,link,fullname])           # 한 공모전에 대한 제목, 링크, 이미지이름을 result라는 리스트에 저장
+
+
+
+data = pd.DataFrame(result) # 위에서 저장한 result를 데이터프레임으로 변환
+data.head()
+data.columns = ['제목','링크','이미지 경로']
+data.to_csv('file5.txt', encoding='UTF-8') # csv형식으로 txt파일로 저장
+print("전체 끝")
+
+###################################
+
+# 해당 공모전의 내용(div포함) 크롤링하는 코드
+
+
+import urllib.request
+import re
+import lxml
+from bs4 import BeautifulSoup
+import pandas as pd
+
+base_url = "https://www.thinkcontest.com/Contest/CateField.html?page={}&c=1"
+keywords = []
+result = []
+for n in range(0,14):
+    url = base_url.format(n+1)
+    req = urllib.request.urlopen(url)
+    res = req.read()
+    soup = BeautifulSoup(res,'lxml')
+#     print(soup)
+
+    titles = soup.find_all("div",class_=re.compile("contest-title.*?",re.DOTALL))
+
+    urls = [each_line.a.get('href').strip() for each_line in titles]
+
+    for url1 in urls:
+        req2 = urllib.request.urlopen("http://www.thinkcontest.com"+url1)
+        res2 = req2.read()
+
+        soup = BeautifulSoup(res2, 'lxml')
+        contents = str(soup.find("div", class_=re.compile("info-cont?",re.DOTALL)))
+        contents += "qlaksek"
+        result.append(contents)
+        print(result)
+        print('\n')
+
+print("끝!")
+file = open('content1.txt','w',encoding='utf-8')
+for r in result:
+    file.write(r)
+file.close()
+
+print("저장완료")
